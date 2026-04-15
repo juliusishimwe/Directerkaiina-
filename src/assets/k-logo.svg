@@ -1,0 +1,5 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title">
+  <title id="title">KAIINA logo</title>
+  <rect width="256" height="256" rx="32" fill="#0b0f18" />
+  <path d="M72 64L128 160L72 192V224H112L168 144L112 64H72Z" fill="#ffffff" />
+</svg>
