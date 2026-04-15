@@ -12,7 +12,7 @@ import {
 } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import contactImage from "../../imports/dddd.jpg.jpeg";
+import contactImage from "../../imports/kaiina.jpg";
 
 export function Contact() {
   const [email, setEmail] = useState("contact@kaiina.com");
