@@ -16,9 +16,6 @@ export default function App() {
   const [isEditMode, setIsEditMode] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const bodyRef = useRef<HTMLDivElement>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
     // Initialize AudioContext on user interaction
