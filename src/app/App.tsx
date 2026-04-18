@@ -9,35 +9,13 @@ import { About } from "./components/About";
 import { Contact } from "./components/Contact";
 import { Button } from "./components/ui/button";
 
-const initialProjects: VideoProject[] = [
-  {
-    id: "1",
-    title: "The Last Symphony",
-    description: "A poignant narrative about a composer's final masterpiece, exploring themes of legacy and artistic passion.",
-    thumbnail: "https://images.unsplash.com/photo-1595340298390-8113ab27284a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaW5lbWF0aWMlMjB2aWRlbyUyMGZyYW1lfGVufDF8fHx8MTc3NTE0MDkxNXww&ixlib=rb-4.1.0&q=80&w=1080",
-    videoUrl: "https://vimeo.com/showcase",
-    category: "Short Film"
-  },
-  {
-    id: "2",
-    title: "Nike - Just Do It Campaign",
-    description: "High-energy commercial capturing the spirit of determination and athletic excellence for Nike's global campaign.",
-    thumbnail: "https://images.unsplash.com/photo-1553377102-7479aacccd00?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3ZpZSUyMHByb2R1Y3Rpb24lMjBzZXQlMjBwcm9mZXNzaW9uYWx8ZW58MXx8fHwxNzc1MTQwOTA4fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    videoUrl: "https://vimeo.com/showcase",
-    category: "Commercial"
-  },
-  {
-    id: "3",
-    title: "Voices of Change",
-    description: "Award-winning documentary following activists fighting for environmental justice in their communities.",
-    thumbnail: "https://images.unsplash.com/photo-1544896478-19d7df7aa725?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmaWxtJTIwZGlyZWN0b3IlMjBjaW5lbWElMjBwcm9kdWN0aW9ufGVufDF8fHx8MTc3NTE0MDkwOHww&ixlib=rb-4.1.0&q=80&w=1080",
-    videoUrl: "https://vimeo.com/showcase",
-    category: "Documentary"
-  },
-];
+const API_BASE_URL = 'http://localhost:5000/api';
 
 export default function App() {
-  const [projects, setProjects] = useState<VideoProject[]>(initialProjects);
+  const [projects, setProjects] = useState<VideoProject[]>([]);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -47,7 +25,22 @@ export default function App() {
     if (!audioContextRef.current) {
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
     }
+
+    // Fetch videos from backend
+    fetchVideos();
   }, []);
+
+  const fetchVideos = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/videos`);
+      if (response.ok) {
+        const videos = await response.json();
+        setProjects(videos);
+      }
+    } catch (error) {
+      console.error('Error fetching videos:', error);
+    }
+  };
 
   const playClickSound = () => {
     if (!audioContextRef.current) return;
@@ -69,16 +62,35 @@ export default function App() {
     oscillator.stop(audioContext.currentTime + 0.1);
   };
 
-  const handleAddProject = (newProject: Omit<VideoProject, "id">) => {
-    const project: VideoProject = {
-      ...newProject,
-      id: Date.now().toString(),
-    };
-    setProjects([...projects, project]);
+  const handleAddProject = async (newProject: Omit<VideoProject, "id">) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/videos`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newProject),
+      });
+      if (response.ok) {
+        const addedVideo = await response.json();
+        setProjects([...projects, addedVideo]);
+      }
+    } catch (error) {
+      console.error('Error adding video:', error);
+    }
   };
 
-  const handleDeleteProject = (id: string) => {
-    setProjects(projects.filter(project => project.id !== id));
+  const handleDeleteProject = async (id: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/videos/${id}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        setProjects(projects.filter(project => project.id !== id));
+      }
+    } catch (error) {
+      console.error('Error deleting video:', error);
+    }
   };
 
   const handleEditPortfolioClick = () => {
