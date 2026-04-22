@@ -1,11 +1,20 @@
 
   # Director Portfolio with Edit Button
 
-  This is a code bundle for Director Portfolio with Edit Button. The original project is available at https://www.figma.com/design/LWJ84NCG2toaym9GupI9kP/Director-Portfolio-with-Edit-Button.
+This repository contains the Director Portfolio web app with an edit button feature.
 
-  ## Running the code
+The original design is available at:
+https://www.figma.com/design/LWJ84NCG2toaym9GupI9kP/Director-Portfolio-with-Edit-Button
 
-  Run `npm i` to install the dependencies.
+## Running the code
 
-  Run `npm run dev` to start the development server.
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Start the development server:
+   ```bash
+   npm run dev
+   ```
   
