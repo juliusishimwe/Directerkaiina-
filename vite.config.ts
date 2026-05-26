@@ -40,13 +40,10 @@ export default defineConfig({
     target: 'esnext',
     // Disable CSS code split to reduce HTTP requests
     cssCodeSplit: false,
-    // Enable minification for all files
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-      },
+    // Use Vite's built-in ESBuild minifier so no terser dependency is required
+    minify: 'esbuild',
+    esbuild: {
+      drop: ['console', 'debugger'],
     },
     // Increase chunk size warning limit
     chunkSizeWarningLimit: 1000,
