@@ -1,15 +1,7 @@
 import { motion } from "motion/react";
 import { ChevronDown } from "lucide-react";
-import { useEffect } from "react";
-import logoImage from "../../imports/dddd.jpg-2.jpeg";
 
 export function Hero() {
-  // Preload logo image
-  useEffect(() => {
-    const img = new Image();
-    img.src = logoImage;
-  }, []);
-
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Gradient Background */}

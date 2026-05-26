@@ -3,29 +3,27 @@ import { RouterProvider } from "react-router";
 import { router } from "./routes";
 import { ContentProvider } from "./context/ContentContext";
 import { Toaster } from "./components/ui/sonner";
-import faviconImage from "../imports/favicon.jpg.jpeg";
-import logoImage from "../imports/dddd.jpg-2.jpeg";
+import faviconImage from "../imports/favicon.jfif";
+
+
+
+
 
 export default function App() {
   useEffect(() => {
     // Set favicon
-    const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-    link.type = 'image/jpeg';
-    link.rel = 'icon';
-    link.href = faviconImage;
-    document.head.appendChild(link);
+    const existingLink = document.querySelector("link[rel*='icon']") as HTMLLinkElement | null;
+    const linkEl = existingLink || document.createElement('link');
+    linkEl.type = 'image/jpeg';
+    linkEl.rel = 'icon';
+    linkEl.href = faviconImage;
+
+    if (!existingLink) {
+      document.head.appendChild(linkEl);
+    }
 
     // Set document title
     document.title = "KAIINA | Cinematic Storyteller";
-  }, []);
-
-  useEffect(() => {
-    // Preload critical hero logo after main content loads (non-blocking)
-    const preloadLink = document.createElement('link');
-    preloadLink.rel = 'preload';
-    preloadLink.as = 'image';
-    preloadLink.href = logoImage;
-    document.head.appendChild(preloadLink);
   }, []);
 
   return (
