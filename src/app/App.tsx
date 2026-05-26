@@ -15,15 +15,17 @@ export default function App() {
     link.href = faviconImage;
     document.head.appendChild(link);
 
-    // Preload critical hero logo
+    // Set document title
+    document.title = "KAIINA | Cinematic Storyteller";
+  }, []);
+
+  useEffect(() => {
+    // Preload critical hero logo after main content loads (non-blocking)
     const preloadLink = document.createElement('link');
     preloadLink.rel = 'preload';
     preloadLink.as = 'image';
     preloadLink.href = logoImage;
     document.head.appendChild(preloadLink);
-
-    // Set document title
-    document.title = "KAIINA | Cinematic Storyteller";
   }, []);
 
   return (
