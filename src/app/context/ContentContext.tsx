@@ -123,24 +123,95 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     return saved ? JSON.parse(saved) : defaultShowreelData;
   });
 
+  // KV endpoint prefix (server function)
+  const KV_PREFIX = "/make-server-3d5f1a28/kv";
+
+  const fetchKV = async (key: string) => {
+    try {
+      const res = await fetch(`${KV_PREFIX}/${encodeURIComponent(key)}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      return json?.value;
+    } catch (err) {
+      console.error("fetchKV error", key, err);
+      return null;
+    }
+  };
+
+  const saveKV = async (key: string, value: any) => {
+    try {
+      await fetch(`${KV_PREFIX}/${encodeURIComponent(key)}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(value),
+      });
+    } catch (err) {
+      console.error("saveKV error", key, err);
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const [p, s, c, sh] = await Promise.all([
+          fetchKV("kaiina_projects"),
+          fetchKV("kaiina_social_links"),
+          fetchKV("kaiina_contact_info"),
+          fetchKV("kaiina_showreel"),
+        ]);
+
+        if (p) {
+          setProjectsState(p);
+          localStorage.setItem("kaiina_projects", JSON.stringify(p));
+        }
+        if (s) {
+          setSocialLinksState(s);
+          localStorage.setItem("kaiina_social_links", JSON.stringify(s));
+        }
+        if (c) {
+          setContactInfoState(c);
+          localStorage.setItem("kaiina_contact_info", JSON.stringify(c));
+        }
+        if (sh) {
+          setShowreelDataState(sh);
+          localStorage.setItem("kaiina_showreel", JSON.stringify(sh));
+        }
+      } catch (err) {
+        console.error("ContentProvider load error", err);
+      }
+    })();
+  }, []);
+
   const setProjects = (newProjects: WorkProject[]) => {
     setProjectsState(newProjects);
-    localStorage.setItem("kaiina_projects", JSON.stringify(newProjects));
+    try {
+      localStorage.setItem("kaiina_projects", JSON.stringify(newProjects));
+    } catch {}
+    void saveKV("kaiina_projects", newProjects);
   };
 
   const setSocialLinks = (newLinks: SocialLink[]) => {
     setSocialLinksState(newLinks);
-    localStorage.setItem("kaiina_social_links", JSON.stringify(newLinks));
+    try {
+      localStorage.setItem("kaiina_social_links", JSON.stringify(newLinks));
+    } catch {}
+    void saveKV("kaiina_social_links", newLinks);
   };
 
   const setContactInfo = (newInfo: ContactInfo) => {
     setContactInfoState(newInfo);
-    localStorage.setItem("kaiina_contact_info", JSON.stringify(newInfo));
+    try {
+      localStorage.setItem("kaiina_contact_info", JSON.stringify(newInfo));
+    } catch {}
+    void saveKV("kaiina_contact_info", newInfo);
   };
 
   const setShowreelData = (newData: ShowreelData) => {
     setShowreelDataState(newData);
-    localStorage.setItem("kaiina_showreel", JSON.stringify(newData));
+    try {
+      localStorage.setItem("kaiina_showreel", JSON.stringify(newData));
+    } catch {}
+    void saveKV("kaiina_showreel", newData);
   };
 
   return (
