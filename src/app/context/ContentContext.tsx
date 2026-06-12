@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { fetchProjectsFromSupabase } from "../../hooks/useSupabaseProjects";
 
 export interface WorkProject {
   id: string;
@@ -178,6 +179,16 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         }
       } catch (err) {
         console.error("ContentProvider load error", err);
+      }
+
+      try {
+        const remoteProjects = await fetchProjectsFromSupabase();
+        if (remoteProjects !== null) {
+          setProjectsState(remoteProjects);
+          localStorage.setItem("kaiina_projects", JSON.stringify(remoteProjects));
+        }
+      } catch (err) {
+        console.error("Supabase project load error", err);
       }
     })();
   }, []);

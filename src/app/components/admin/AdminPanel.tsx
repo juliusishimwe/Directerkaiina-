@@ -3,6 +3,11 @@ import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { LogOut, Save, Plus, Trash2, Eye } from "lucide-react";
 import { useContent } from "../../context/ContentContext";
+import {
+  createProjectInSupabase,
+  deleteProjectInSupabase,
+  updateProjectInSupabase,
+} from "../../hooks/useSupabaseProjects";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -32,7 +37,7 @@ export function AdminPanel() {
     navigate("/admin/login");
   };
 
-  const handleAddProject = () => {
+  const handleAddProject = async () => {
     const newProject = {
       id: Date.now().toString(),
       title: "NEW PROJECT",
@@ -42,21 +47,46 @@ export function AdminPanel() {
       videoUrl: "",
       gradient: "from-purple-900/80 to-black",
     };
+
     setProjects([...projects, newProject]);
-    toast.success("Project added");
+
+    try {
+      await createProjectInSupabase(newProject);
+      toast.success("Project added");
+    } catch (err) {
+      console.error("Add project error", err);
+      toast.error("Unable to save project to Supabase");
+    }
   };
 
-  const handleUpdateProject = (id: string, field: string, value: string) => {
-    setProjects(
-      projects.map((p) =>
-        p.id === id ? { ...p, [field]: value } : p
-      )
+  const handleUpdateProject = async (id: string, field: string, value: string) => {
+    const updatedProjects = projects.map((p) =>
+      p.id === id ? { ...p, [field]: value } : p
     );
+
+    setProjects(updatedProjects);
+
+    const updatedProject = updatedProjects.find((project) => project.id === id);
+    if (!updatedProject) return;
+
+    try {
+      await updateProjectInSupabase(updatedProject);
+    } catch (err) {
+      console.error("Update project error", err);
+      toast.error("Unable to save project update");
+    }
   };
 
-  const handleDeleteProject = (id: string) => {
+  const handleDeleteProject = async (id: string) => {
     setProjects(projects.filter((p) => p.id !== id));
-    toast.success("Project deleted");
+
+    try {
+      await deleteProjectInSupabase(id);
+      toast.success("Project deleted");
+    } catch (err) {
+      console.error("Delete project error", err);
+      toast.error("Unable to delete project from Supabase");
+    }
   };
 
   const handleToggleSocial = (id: string) => {

@@ -6,9 +6,6 @@ import { Toaster } from "./components/ui/sonner";
 import faviconImage from "../imports/favicon.jfif";
 
 
-
-
-
 export default function App() {
   useEffect(() => {
     // Set favicon
